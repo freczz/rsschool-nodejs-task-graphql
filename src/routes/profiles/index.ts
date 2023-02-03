@@ -2,6 +2,7 @@ import { FastifyPluginAsyncJsonSchemaToTs } from '@fastify/type-provider-json-sc
 import { idParamSchema } from '../../utils/reusedSchemas';
 import { createProfileBodySchema, changeProfileBodySchema } from './schema';
 import type { ProfileEntity } from '../../utils/DB/entities/DBProfiles';
+import { ERROR_MESSAGES } from '../../constants/';
 
 const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
   fastify
@@ -46,7 +47,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       });
 
       if (memberType === null) {
-        throw this.httpErrors.badRequest("Member type not found");
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.memberTypeNotFound);
       }
 
       const userAlreadyHasAProfile = await this.db.profiles.findOne({
@@ -55,7 +56,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       });
 
       if (userAlreadyHasAProfile) {
-        throw this.httpErrors.badRequest("User already has a profile");
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.profileFound);
       }
 
       const newProfile = await this.db.profiles.create(request.body);
@@ -77,7 +78,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       });
 
       if (!profile) {
-        throw this.httpErrors.badRequest('Profile not found')
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.profileNotFound)
       }
 
       const deletedProfile = await this.db.profiles.delete(request.params.id);

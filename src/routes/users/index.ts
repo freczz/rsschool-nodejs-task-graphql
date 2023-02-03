@@ -5,7 +5,8 @@ import {
   changeUserBodySchema,
   subscribeBodySchema,
 } from './schemas';
-import type { UserEntity } from '../../utils/DB/entities/DBUsers';
+import type { UserEntity } from '@utils/DB/entities/DBUsers';
+import { ERROR_MESSAGES } from '../../constants/';
 
 const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
   fastify
@@ -139,7 +140,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       });
 
       if (!currentUser || !userToSubscribe) {
-        throw this.httpErrors.badRequest("User not found");
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.userNotFound);
       }
 
       const alreadySubscribed = currentUser.subscribedToUserIds.includes(
@@ -153,7 +154,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       const isSubscribeToHimself = request.body.userId === request.params.id;
 
       if (isSubscribeToHimself) {
-        throw this.httpErrors.badRequest("You can't subscribe to yourself");
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.subscribingToYourself);
       }
 
       try {
@@ -190,7 +191,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       });
 
       if (!currentUser || !userToUnsubscribe) {
-        throw this.httpErrors.badRequest("User not found");
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.userNotFound);
       }
 
       const alreadySubscribed = currentUser.subscribedToUserIds.includes(
@@ -198,13 +199,13 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       );
 
       if (!alreadySubscribed) {
-        throw this.httpErrors.badRequest("You are not following this user");
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.notFollowingUser);
       }
 
       const isUnsubscribeToHimself = request.body.userId === request.params.id;
 
       if (isUnsubscribeToHimself) {
-        throw this.httpErrors.badRequest("You can't unsubscribe to yourself");
+        throw this.httpErrors.badRequest(ERROR_MESSAGES.unsubscribingToYourself);
       }
 
       try {
